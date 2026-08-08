@@ -7,7 +7,11 @@ import { ChatFeed, MessageTurn } from "@/components/ChatFeed";
 import { InputPill } from "@/components/InputPill";
 import { SpecsDrawer } from "@/components/SpecsDrawer";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000";
+const BACKEND_URL = (
+  process.env.NEXT_PUBLIC_API_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  "http://127.0.0.1:8000"
+).replace(/\/$/, "");
 
 export default function Home() {
   const [prompt, setPrompt] = useState<string>("");
@@ -55,7 +59,9 @@ export default function Home() {
       ]);
     } catch (err) {
       console.error("Generation error:", err);
-      setError(`Failed to connect to FastAPI backend at ${BACKEND_URL}. Ensure the backend service is running and CORS is enabled.`);
+      setError(
+        `Unable to reach backend at ${BACKEND_URL}. If your backend is hosted on a free tier (e.g. Render), it may be waking up from sleep mode—please wait ~30 seconds and try again.`
+      );
     } finally {
       setIsLoading(false);
     }
