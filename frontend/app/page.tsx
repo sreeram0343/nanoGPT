@@ -55,7 +55,7 @@ export default function Home() {
       ]);
     } catch (err) {
       console.error("Generation error:", err);
-      setError("Failed to connect to FastAPI backend on port 8000.");
+      setError(`Failed to connect to FastAPI backend at ${BACKEND_URL}. Ensure the backend service is running and CORS is enabled.`);
     } finally {
       setIsLoading(false);
     }
