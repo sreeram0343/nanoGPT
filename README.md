@@ -1,57 +1,57 @@
-# SuperGPT — Character-Level Transformer
+# SuperGPT — Small GPT Architecture
 
 ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)
 
-SuperGPT is a lightweight **decoder-only Transformer built entirely from scratch in PyTorch**, trained on the Tiny Shakespeare corpus.
+SuperGPT is a lightweight **GPT-style language model built from scratch in PyTorch** and trained on Shakespeare's works.
 
-It serves as an end-to-end implementation of foundational LLM mechanics, covering custom tokenization, multi-head attention, residual stacks, training, inference, and streaming execution.
+It demonstrates the core mechanics of generative AI—tokenization, self-attention, neural network blocks, training loops, and real-time inference.
 
-## Features
+## Key Features
 
-- Native PyTorch GPT implementation
-- Bidirectional character tokenizer
-- Multi-head causal self-attention
-- Pre-LayerNorm residual blocks
-- Autoregressive sampling logic
-- ~0.84M trainable parameters
-- 4 Transformer block layers
-- 4 parallel attention heads
-- 128-dimensional hidden states
-- 128-character context window
-- 65-token character vocabulary
-- FastAPI backend inference API
-- Next.js + Tailwind web interface
-- Server-Sent Events (SSE) streaming
+- **Custom GPT Core:** Built purely with PyTorch primitives (no pre-made model libraries)
+- **Compact & Efficient:** ~0.84M parameters (~1M scale) optimized for fast local learning
+- **Character Tokenizer:** Maps raw character strings directly to discrete embeddings
+- **Modern Transformer Stack:** Pre-LayerNorm design with causal multi-head self-attention
+- **Full-Stack Interface:** FastAPI backend coupled with a Next.js + Tailwind dark UI
+- **Real-Time Streaming:** Server-Sent Events (SSE) deliver token-by-token character output
 
-## Architecture
+## Model Specifications
+
+- **Total Parameters:** ~824,897 (0.84M)
+- **Transformer Layers:** 4
+- **Attention Heads:** 4
+- **Embedding Dimension:** 128
+- **Context Length:** 128 characters
+- **Vocabulary Size:** 65 unique tokens
+
+## System Flow
 
 ```text
-Input Tokens
-    |
-    v
-Character Encoding
-    |
-    v
+Input Prompt
+    │
+    ▼
+Character Tokenizer
+    │
+    ▼
 Token + Position Embeddings
-    |
-    v
-Transformer Stack x4
-    |
-    +-- LayerNorm & Multi-Head Attention
-    +-- Residual Skip Connections
-    +-- LayerNorm & Feed-Forward Network
-    +-- Non-Linear Activations
-    |
-    v
+    │
+    ▼
+Transformer Blocks (x4)
+    ├── Multi-Head Causal Attention
+    ├── Feed-Forward Neural Network
+    ├── Residual Skip Connections
+    └── Layer Normalization
+    │
+    ▼
 Final Layer Normalization
-    |
-    v
-Language Model Head (LM Head)
-    |
-    v
-Softmax & Temperature Sampling
-    |
-    v
-Streamed Tokens
+    │
+    ▼
+Language Model Head (Linear)
+    │
+    ▼
+Temperature Sampling
+    │
+    ▼
+Streamed Character Output
