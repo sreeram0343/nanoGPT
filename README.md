@@ -4,7 +4,7 @@ A small character-level GPT language model built from scratch using PyTorch, ins
 
 ## Current Model
 
-- Parameters: ~10M
+- Parameters: ~1M ( 0.85 M )
 - Character-level tokenization
 - Text encoding and decoding
 - Training and validation data preparation
@@ -15,7 +15,7 @@ A small character-level GPT language model built from scratch using PyTorch, ins
 
 ## Future
 
-The goal is to progressively scale the model beyond its current ~10M parameters and experiment with larger datasets, improved tokenization, and better training techniques.
+The goal is to progressively scale the model beyond its current ~1M parameters and experiment with larger datasets, improved tokenization, and better training techniques.
 
 Planned directions:
 
