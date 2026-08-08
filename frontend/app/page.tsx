@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Header } from "@/components/Header";
 import { EmptyState } from "@/components/EmptyState";
-import { OutputBlock } from "@/components/OutputBlock";
+import { ChatFeed, MessageTurn } from "@/components/ChatFeed";
 import { InputPill } from "@/components/InputPill";
 import { SpecsDrawer } from "@/components/SpecsDrawer";
 
@@ -13,22 +13,27 @@ export default function Home() {
   const [prompt, setPrompt] = useState<string>("");
   const [temperature, setTemperature] = useState<number>(0.8);
   const [maxTokens, setMaxTokens] = useState<number>(150);
-  const [output, setOutput] = useState<string>("");
+  const [turns, setTurns] = useState<MessageTurn[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSpecsOpen, setIsSpecsOpen] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleGenerate = async () => {
-    if (!prompt.trim()) return;
+  const handleGenerate = async (overridePrompt?: string) => {
+    const activePrompt = overridePrompt || prompt;
+    if (!activePrompt.trim() || isLoading) return;
+
     setIsLoading(true);
     setError(null);
+    setPrompt("");
+
+    const turnId = Date.now().toString();
 
     try {
       const res = await fetch(`${BACKEND_URL}/api/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          prompt: prompt,
+          prompt: activePrompt,
           max_tokens: maxTokens,
           temperature: temperature,
         }),
@@ -39,7 +44,15 @@ export default function Home() {
       }
 
       const data = await res.json();
-      setOutput(data.text);
+
+      setTurns((prev) => [
+        ...prev,
+        {
+          id: turnId,
+          prompt: activePrompt,
+          response: data.text,
+        },
+      ]);
     } catch (err: any) {
       console.error("Generation error:", err);
       setError("Failed to connect to FastAPI backend on port 8000.");
@@ -50,6 +63,14 @@ export default function Home() {
 
   const handleSelectPrompt = (p: string) => {
     setPrompt(p);
+    handleGenerate(p);
+  };
+
+  const handleRegenerateLast = () => {
+    if (turns.length === 0) return;
+    const lastTurn = turns[turns.length - 1];
+    setTurns((prev) => prev.slice(0, -1));
+    handleGenerate(lastTurn.prompt);
   };
 
   return (
@@ -58,27 +79,28 @@ export default function Home() {
       {/* Header Bar */}
       <Header onOpenSpecs={() => setIsSpecsOpen(true)} />
 
-      {/* Centered Main Workspace Container */}
-      <main className="flex-1 max-w-2xl w-full mx-auto px-4 py-8 flex flex-col justify-center gap-6">
+      {/* Centered Chat Workspace Container */}
+      <main className="flex-1 max-w-2xl w-full mx-auto px-4 py-6 flex flex-col justify-between gap-4">
         
-        {/* Error Alert */}
+        {/* Error Notification */}
         {error && (
-          <div className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-3.5 text-xs text-neutral-400 text-center font-mono">
+          <div className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-3 text-xs text-neutral-400 text-center font-mono">
             {error}
           </div>
         )}
 
-        {/* Dynamic Workspace Content */}
-        {!output && !isLoading ? (
-          <EmptyState onSelectPrompt={handleSelectPrompt} />
-        ) : (
-          <OutputBlock
-            prompt={prompt}
-            output={output}
-            isLoading={isLoading}
-            onRegenerate={handleGenerate}
-          />
-        )}
+        {/* Multi-Turn Chat Feed or Empty State */}
+        <div className="flex-1 flex flex-col justify-center">
+          {turns.length === 0 && !isLoading ? (
+            <EmptyState onSelectPrompt={handleSelectPrompt} />
+          ) : (
+            <ChatFeed
+              turns={turns}
+              isLoading={isLoading}
+              onRegenerateLast={handleRegenerateLast}
+            />
+          )}
+        </div>
 
         {/* Floating Bottom Input Pill */}
         <div className="w-full mt-4 sticky bottom-6 z-30">
@@ -89,7 +111,7 @@ export default function Home() {
             setTemperature={setTemperature}
             maxTokens={maxTokens}
             setMaxTokens={setMaxTokens}
-            onGenerate={handleGenerate}
+            onGenerate={() => handleGenerate()}
             isLoading={isLoading}
           />
         </div>

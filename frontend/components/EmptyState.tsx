@@ -17,10 +17,10 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ onSelectPrompt }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[320px] text-center px-4 py-8">
       <h1 className="text-2xl sm:text-3xl font-normal text-neutral-200 tracking-tight mb-2">
-        Tiny Shakespeare Transformer
+        SuperGPT
       </h1>
       <p className="text-sm text-neutral-400 max-w-md mb-8">
-        Character-level autoregressive language model trained in PyTorch. Select a prompt or enter your own text below.
+        0.82M parameter character-level PyTorch language model. Select a prompt or enter your own prompt below to chat.
       </p>
 
       <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-2.5 max-w-xl w-full">

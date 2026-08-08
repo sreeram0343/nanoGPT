@@ -34,7 +34,6 @@ export const InputPill: React.FC<InputPillProps> = ({
     }
   };
 
-  // Close popover when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
@@ -103,10 +102,10 @@ export const InputPill: React.FC<InputPillProps> = ({
         </div>
       )}
 
-      {/* Main Floating Pill Container */}
+      {/* Main Floating Input Pill Container */}
       <div className="w-full rounded-2xl bg-neutral-900 border border-neutral-800 focus-within:border-neutral-700 p-2.5 flex items-center gap-2 shadow-xl transition-colors">
         
-        {/* Settings Toggle Button */}
+        {/* Settings Toggle Icon Button */}
         <button
           type="button"
           onClick={() => setShowSettings(!showSettings)}
@@ -115,18 +114,18 @@ export const InputPill: React.FC<InputPillProps> = ({
               ? "bg-neutral-800 text-neutral-200"
               : "text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850"
           }`}
-          title="Adjust Parameters"
+          title="Adjust Hyperparameters"
         >
           <Sliders className="w-4 h-4" />
         </button>
 
-        {/* Textarea */}
+        {/* Textarea Input */}
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           onKeyDown={handleKeyDown}
           rows={1}
-          placeholder="Enter prompt (e.g. ROMEO:)..."
+          placeholder="Ask SuperGPT a prompt (e.g., ROMEO:)..."
           className="flex-1 bg-transparent text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none resize-none font-sans px-1"
         />
 
@@ -136,7 +135,7 @@ export const InputPill: React.FC<InputPillProps> = ({
           onClick={onGenerate}
           disabled={isLoading || !prompt.trim()}
           className="p-2.5 rounded-xl bg-neutral-800 hover:bg-neutral-750 disabled:opacity-40 text-neutral-200 disabled:cursor-not-allowed transition-all shrink-0"
-          title="Generate Response"
+          title="Send Prompt"
         >
           {isLoading ? (
             <div className="w-4 h-4 rounded-full border-2 border-neutral-500 border-t-neutral-200 animate-spin" />
