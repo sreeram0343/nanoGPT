@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Play, Loader2, Thermometer, Hash, MessageSquare, Flame, Sparkles } from "lucide-react";
+import React from "react";
+import { Loader2, Thermometer, Hash, MessageSquare, Sparkles } from "lucide-react";
 
 interface GeneratorPanelProps {
   prompt: string;

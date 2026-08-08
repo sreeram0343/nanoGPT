@@ -77,7 +77,7 @@ export const EducationalBreakdown: React.FC = () => {
             </p>
 
             <div className="bg-slate-900/90 border border-slate-800 rounded-lg p-3 font-mono text-xs text-amber-300">
-              <span className="text-slate-400">// Character Mapping Snippet</span>
+              <span className="text-slate-400">{"// Character Mapping Snippet"}</span>
               <br />
               {"stoi = {'\\n': 0, ' ': 1, '!': 2, ... 'R': 30, 'O': 27, 'M': 25, 'E': 17}"}
               <br />
@@ -109,7 +109,7 @@ export const EducationalBreakdown: React.FC = () => {
             </p>
 
             <div className="bg-slate-900/90 border border-slate-800 rounded-lg p-3 font-mono text-xs text-indigo-300 overflow-x-auto">
-              <span className="text-slate-400">// Scaled Dot-Product Causal Masking</span>
+              <span className="text-slate-400">{"// Scaled Dot-Product Causal Masking"}</span>
               <br />
               {"Wei = Softmax( (Q @ K.T) / sqrt(d_k) + Tril_Mask )"}
               <br />

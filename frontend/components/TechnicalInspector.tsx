@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Cpu, Layers, Maximize2, Type, Activity, Zap, Server, ShieldCheck } from "lucide-react";
+import { Cpu, Layers, Maximize2, Type, Activity } from "lucide-react";
 
 export const TechnicalInspector: React.FC = () => {
   const metrics = [

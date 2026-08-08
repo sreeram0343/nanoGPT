@@ -107,7 +107,7 @@ export const ManuscriptOutput: React.FC<ManuscriptOutputProps> = ({
           <div className="h-full min-h-[220px] flex flex-col items-center justify-center text-slate-500 gap-2 select-none">
             <FileText className="w-8 h-8 opacity-40 text-amber-400" />
             <p className="text-xs font-sans text-slate-400">
-              Select a prompt and click <span className="text-amber-400 font-medium">"Generate Shakespearean Text"</span> to begin.
+              Select a prompt and click <span className="text-amber-400 font-medium">&quot;Generate Shakespearean Text&quot;</span> to begin.
             </p>
           </div>
         )}

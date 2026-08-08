@@ -11,7 +11,6 @@ interface OutputBlockProps {
 }
 
 export const OutputBlock: React.FC<OutputBlockProps> = ({
-  prompt,
   output,
   isLoading,
   onRegenerate,
