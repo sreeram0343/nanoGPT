@@ -121,7 +121,7 @@ def get_info():
     }
 
 @app.post("/api/generate")
-def generate(req: GenerateRequest):
+async def generate(req: GenerateRequest):
     if model is None or not metadata:
         # Re-attempt loading if model wasn't ready at startup
         load_model_and_metadata()

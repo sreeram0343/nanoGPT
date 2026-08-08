@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
+import asyncio
 
 class SingleHeadAttention(nn.Module):
     """ One head of Causal Self-Attention """
@@ -153,7 +154,7 @@ def generate_sequence(
     return text
 
 
-def generate_sequence_stream(
+async def generate_sequence_stream(
     model: TinyTransformer,
     prompt: str,
     max_tokens: int,
@@ -162,7 +163,7 @@ def generate_sequence_stream(
     itos: dict,
     device: str = 'cpu'
 ):
-    """ Autoregressively yields generated character strings token-by-token """
+    """ Autoregressively yields generated character strings token-by-token with zero buffering lag """
     model.eval()
     
     clean_prompt = "".join([c for c in prompt if c in stoi])
@@ -174,8 +175,9 @@ def generate_sequence_stream(
 
     # Yield initial clean prompt
     yield clean_prompt
+    await asyncio.sleep(0)
 
-    with torch.no_grad():
+    with torch.inference_mode():
         for _ in range(max_tokens):
             x_cond = x[:, -model.block_size:]
             logits, _ = model(x_cond)
@@ -190,3 +192,4 @@ def generate_sequence_stream(
             next_idx_val = idx_next.item()
             char = itos.get(str(next_idx_val), itos.get(next_idx_val, ''))
             yield char
+            await asyncio.sleep(0.002)

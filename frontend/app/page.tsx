@@ -64,6 +64,16 @@ export default function Home() {
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let accumulated = "";
+      let pendingUpdate = false;
+
+      const flushUpdate = () => {
+        setTurns((prev) =>
+          prev.map((turn) =>
+            turn.id === turnId ? { ...turn, response: accumulated } : turn
+          )
+        );
+        pendingUpdate = false;
+      };
 
       while (true) {
         const { done, value } = await reader.read();
@@ -72,12 +82,13 @@ export default function Home() {
         const chunk = decoder.decode(value, { stream: true });
         accumulated += chunk;
 
-        setTurns((prev) =>
-          prev.map((turn) =>
-            turn.id === turnId ? { ...turn, response: accumulated } : turn
-          )
-        );
+        if (!pendingUpdate) {
+          pendingUpdate = true;
+          requestAnimationFrame(flushUpdate);
+        }
       }
+
+      flushUpdate();
     } catch (err) {
       console.error("Generation error:", err);
       setTurns((prev) => prev.filter((t) => t.id !== turnId || t.response.length > 0));
