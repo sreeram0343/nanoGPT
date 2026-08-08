@@ -4,54 +4,54 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)
 
-SuperGPT is a compact **GPT-style language model built from scratch with PyTorch**, trained on the Tiny Shakespeare dataset.
+SuperGPT is a lightweight **decoder-only Transformer built entirely from scratch in PyTorch**, trained on the Tiny Shakespeare corpus.
 
-It is designed to understand the core mechanics behind modern language models, including tokenization, self-attention, Transformer blocks, training, inference, and real-time generation.
+It serves as an end-to-end implementation of foundational LLM mechanics, covering custom tokenization, multi-head attention, residual stacks, training, inference, and streaming execution.
 
 ## Features
 
-- Custom decoder-only Transformer
-- Character-level tokenizer
+- Native PyTorch GPT implementation
+- Bidirectional character tokenizer
 - Multi-head causal self-attention
-- Pre-LayerNorm architecture
-- Autoregressive text generation
+- Pre-LayerNorm residual blocks
+- Autoregressive sampling logic
 - ~0.84M trainable parameters
-- 4 Transformer layers
-- 4 attention heads
-- 128-dimensional embeddings
-- 128-token context window
-- 65-character vocabulary
-- FastAPI inference backend
-- Next.js + Tailwind frontend
-- Real-time SSE text streaming
+- 4 Transformer block layers
+- 4 parallel attention heads
+- 128-dimensional hidden states
+- 128-character context window
+- 65-token character vocabulary
+- FastAPI backend inference API
+- Next.js + Tailwind web interface
+- Server-Sent Events (SSE) streaming
 
 ## Architecture
 
 ```text
-Input Text
+Input Tokens
     |
     v
-Character Tokenization
+Character Encoding
     |
     v
 Token + Position Embeddings
     |
     v
-Transformer Block x4
+Transformer Stack x4
     |
-    +-- Multi-Head Causal Attention
-    +-- Feed-Forward Network
-    +-- Residual Connections
-    +-- Layer Normalization
-    |
-    v
-Language Model Head
+    +-- LayerNorm & Multi-Head Attention
+    +-- Residual Skip Connections
+    +-- LayerNorm & Feed-Forward Network
+    +-- Non-Linear Activations
     |
     v
-Logits
+Final Layer Normalization
     |
     v
-Sampling
+Language Model Head (LM Head)
     |
     v
-Generated Text
+Softmax & Temperature Sampling
+    |
+    v
+Streamed Tokens
