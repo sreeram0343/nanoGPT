@@ -86,6 +86,15 @@ class GenerateResponse(BaseModel):
     generated_length: int
     latency_ms: float
 
+@app.get("/")
+def root():
+    return {
+        "message": "Tiny Shakespeare Transformer FastAPI Backend is running.",
+        "docs": "/docs",
+        "health": "/health",
+        "info": "/api/info"
+    }
+
 @app.get("/health")
 def health_check():
     return {
