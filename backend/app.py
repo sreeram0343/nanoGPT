@@ -7,7 +7,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import torch
 
-from backend.model import TinyTransformer, generate_sequence
+try:
+    from model import TinyTransformer, generate_sequence
+except ImportError:
+    from backend.model import TinyTransformer, generate_sequence
 
 app = FastAPI(
     title="Tiny Shakespeare Transformer API",
