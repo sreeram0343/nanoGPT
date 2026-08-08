@@ -32,6 +32,16 @@ export default function Home() {
 
     const turnId = Date.now().toString();
 
+    // Add initial empty turn for real-time streaming
+    setTurns((prev) => [
+      ...prev,
+      {
+        id: turnId,
+        prompt: activePrompt,
+        response: "",
+      },
+    ]);
+
     try {
       const res = await fetch(`${BACKEND_URL}/api/generate`, {
         method: "POST",
@@ -47,18 +57,30 @@ export default function Home() {
         throw new Error(`HTTP ${res.status}: ${res.statusText}`);
       }
 
-      const data = await res.json();
+      if (!res.body) {
+        throw new Error("Response body is unreadable");
+      }
 
-      setTurns((prev) => [
-        ...prev,
-        {
-          id: turnId,
-          prompt: activePrompt,
-          response: data.text,
-        },
-      ]);
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        accumulated += chunk;
+
+        setTurns((prev) =>
+          prev.map((turn) =>
+            turn.id === turnId ? { ...turn, response: accumulated } : turn
+          )
+        );
+      }
     } catch (err) {
       console.error("Generation error:", err);
+      setTurns((prev) => prev.filter((t) => t.id !== turnId || t.response.length > 0));
       setError(
         `Unable to reach backend at ${BACKEND_URL}. If your backend is hosted on a free tier (e.g. Render), it may be waking up from sleep mode—please wait ~30 seconds and try again.`
       );

@@ -151,3 +151,42 @@ def generate_sequence(
     generated_indices = x[0].tolist()
     text = "".join([itos[str(i)] if isinstance(itos.get(i), str) else itos.get(i, itos.get(str(i), '')) for i in generated_indices])
     return text
+
+
+def generate_sequence_stream(
+    model: TinyTransformer,
+    prompt: str,
+    max_tokens: int,
+    temperature: float,
+    stoi: dict,
+    itos: dict,
+    device: str = 'cpu'
+):
+    """ Autoregressively yields generated character strings token-by-token """
+    model.eval()
+    
+    clean_prompt = "".join([c for c in prompt if c in stoi])
+    if not clean_prompt:
+        clean_prompt = "ROMEO:"
+
+    encoded = [stoi[c] for c in clean_prompt]
+    x = torch.tensor([encoded], dtype=torch.long, device=device)
+
+    # Yield initial clean prompt
+    yield clean_prompt
+
+    with torch.no_grad():
+        for _ in range(max_tokens):
+            x_cond = x[:, -model.block_size:]
+            logits, _ = model(x_cond)
+            logits = logits[:, -1, :]
+            
+            temp = max(float(temperature), 0.01)
+            logits = logits / temp
+            probs = F.softmax(logits, dim=-1)
+            idx_next = torch.multinomial(probs, num_samples=1)
+            x = torch.cat((x, idx_next), dim=1)
+
+            next_idx_val = idx_next.item()
+            char = itos.get(str(next_idx_val), itos.get(next_idx_val, ''))
+            yield char

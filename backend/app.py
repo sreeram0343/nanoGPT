@@ -4,13 +4,14 @@ import time
 from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 import torch
 
 try:
-    from model import TinyTransformer, generate_sequence
+    from model import TinyTransformer, generate_sequence, generate_sequence_stream
 except ImportError:
-    from backend.model import TinyTransformer, generate_sequence
+    from backend.model import TinyTransformer, generate_sequence, generate_sequence_stream
 
 app = FastAPI(
     title="Tiny Shakespeare Transformer API",
@@ -119,7 +120,7 @@ def get_info():
         "architecture": "Decoder-only Causal Transformer (Pre-LayerNorm)"
     }
 
-@app.post("/api/generate", response_model=GenerateResponse)
+@app.post("/api/generate")
 def generate(req: GenerateRequest):
     if model is None or not metadata:
         # Re-attempt loading if model wasn't ready at startup
@@ -127,8 +128,7 @@ def generate(req: GenerateRequest):
         if model is None or not metadata:
             raise HTTPException(status_code=503, detail="Model weights not loaded on server.")
 
-    start_time = time.time()
-    generated_text = generate_sequence(
+    generator = generate_sequence_stream(
         model=model,
         prompt=req.prompt,
         max_tokens=req.max_tokens,
@@ -137,11 +137,13 @@ def generate(req: GenerateRequest):
         itos=metadata["itos"],
         device=device
     )
-    elapsed_ms = round((time.time() - start_time) * 1000, 2)
 
-    return GenerateResponse(
-        text=generated_text,
-        prompt=req.prompt,
-        generated_length=req.max_tokens,
-        latency_ms=elapsed_ms
+    return StreamingResponse(
+        generator,
+        media_type="text/plain",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"
+        }
     )

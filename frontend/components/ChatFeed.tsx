@@ -56,6 +56,9 @@ export const ChatFeed: React.FC<ChatFeedProps> = ({
               {/* Response Text Content */}
               <div className="font-mono text-sm leading-relaxed text-neutral-200 whitespace-pre-wrap break-words py-1">
                 {turn.response}
+                {isLast && isLoading && (
+                  <span className="inline-block w-2 h-4 ml-1 bg-neutral-400 animate-pulse align-middle" />
+                )}
               </div>
 
               {/* Action Row */}
@@ -96,8 +99,8 @@ export const ChatFeed: React.FC<ChatFeedProps> = ({
         );
       })}
 
-      {/* Loading Indicator for active turn */}
-      {isLoading && (
+      {/* Loading Indicator when no turns exist */}
+      {isLoading && turns.length === 0 && (
         <div className="flex flex-col gap-1.5 pl-1">
           <div className="text-xs text-neutral-400 font-medium">SuperGPT</div>
           <div className="flex items-center gap-2 text-neutral-400 text-sm font-mono py-2">
